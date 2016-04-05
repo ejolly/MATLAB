@@ -70,7 +70,7 @@ if ~isempty(newlinepos)
             end
         end
     else
-    %If no text wrapping simply count up the sentences 
+        %If no text wrapping simply count up the sentences 
         extraSents = size(cstring,1);
     end
     %String to measure bounds of 

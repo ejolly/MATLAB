@@ -34,6 +34,8 @@ classdef vasScale
 % updateAnchors     = adds, removes or changes color of anchors of an existing vas
 % getRating         = collects a rating using a mouse click
 % showRating        = shows a rating, with options to add noise, change display color
+% addGlassBound     = adds an invisible max that the cursor can't move past
+% removeGlassBound  = removes an 'glass bounds' on a vas object 
 %
 %
 % Usage:
@@ -161,6 +163,31 @@ classdef vasScale
                 end
             end
         end
+        
+        function obj = addGlassBound(obj,bound)
+            % Updates a vas object's bounds such that a sliding cursor will
+            % appear to be have a "glass ceiling" i.e. won't be able to move
+            % past a specific point on the scale that is less than the max bound
+            % can be expressed a proportion of the total scale length (0-1)
+            % Usage:
+            %
+            % scale_var = scale_var.addGlassBounds(rightBound,leftBound)
+            
+            %Update the cursor bounds
+            reducedLength = obj.scale.main.length*bound;
+            obj.cursor.xmax = obj.cursor.xmin + reducedLength;            
+        end
+        
+        function obj = removeGlassBound(obj)
+            % Updates a vas object by removing any bounds on it
+            % Usage:
+            % 
+            % scale_var = scale_var.removeGlassBound
+            
+            %Update the cursor bounds
+            obj.cursor.xmax = obj.scale.main.end(1);            
+        end
+        
         
         function obj = updatePos(obj,x, y)
             % Updates a vas object's draw position given a new x and y coordinate
