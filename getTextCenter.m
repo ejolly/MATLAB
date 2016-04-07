@@ -33,6 +33,7 @@ if nargin ~= 5
     twrap = [];
 end
 
+extraSents = 1; %Default value
 %See if there are new line characters
 newlinepos = strfind(char(tstring), '\n');
 
