@@ -247,7 +247,11 @@ classdef vasScale
             
             ip.parse(varargin{:});
             obj.anchors.text = ip.Results.anchors;
-            obj.anchors.color = ip.Results.color;
+            
+            %Change anchor color if provided, otherwise leave alone
+            if ~isempty(ip.Results.color)
+                obj.anchors.color = ip.Results.color;
+            end
             
             %Check if we're removing or adding anchors
             if length(obj.anchors.text) > 1
@@ -259,11 +263,6 @@ classdef vasScale
                 Screen('TextSize',obj.windowPtr,defSize);
                 obj.anchors.Lcoords = [lx, ly];
                 obj.anchors.Rcoords = [rx, ry];
-            end
-            
-            %Default anchor text color to the scale color if not provided
-            if isempty(obj.anchors.color)
-               obj.anchors.color = obj.scale.colors;
             end
         end
                
