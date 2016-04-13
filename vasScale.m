@@ -91,6 +91,7 @@ classdef vasScale
             obj.scale.width = ip.Results.scaleThickness;
             obj.cursor.width = ip.Results.cursorWidth;
             obj.anchors.text = ip.Results.anchors;
+            obj.cursor.hasGlassBound = 0;
             
             %Scale cap length is based on screen height
             if ip.Results.scalecapLength < 0
@@ -138,17 +139,17 @@ classdef vasScale
                     obj.anchors.size = Screen('TextSize',obj.windowPtr);                                            
                    
                     [lx, ly] = getTextCenter(obj.windowPtr, obj.anchors.text{1},...
-                    obj.cursor.xmin,obj.scale.cap.startL(2)-obj.anchors.vspace);
+                    obj.scale.cap.startL(1),obj.scale.cap.startL(2)-obj.anchors.vspace);
                     [rx, ry] = getTextCenter(obj.windowPtr, obj.anchors.text{2},...
-                    obj.cursor.xmax,obj.scale.cap.startR(2)-obj.anchors.vspace);
+                    obj.scale.cap.startR(1),obj.scale.cap.startR(2)-obj.anchors.vspace);
                 else
                     obj.anchors.size = ip.Results.anchorSize;
                     defSize = Screen('TextSize',obj.windowPtr, obj.anchors.size);
                     
                     [lx, ly] = getTextCenter(obj.windowPtr, obj.anchors.text{1},...
-                    obj.cursor.xmin,obj.scale.cap.startL(2)-obj.anchors.vspace);
+                    obj.scale.cap.startL(1),obj.scale.cap.startL(2)-obj.anchors.vspace);
                     [rx, ry] = getTextCenter(obj.windowPtr, obj.anchors.text{2},...
-                    obj.cursor.xmax,obj.scale.cap.startR(2)-obj.anchors.vspace);
+                    obj.scale.cap.startR(1),obj.scale.cap.startR(2)-obj.anchors.vspace);
                     
                     Screen('TextSize',obj.windowPtr,defSize);                  
                 end
@@ -175,7 +176,8 @@ classdef vasScale
             
             %Update the cursor bounds
             reducedLength = obj.scale.main.length*bound;
-            obj.cursor.xmax = obj.cursor.xmin + reducedLength;            
+            obj.cursor.xmax = obj.cursor.xmin + reducedLength;
+            obj.cursor.hasGlassBound = 1;
         end
         
         function obj = removeGlassBound(obj)
@@ -185,7 +187,8 @@ classdef vasScale
             % scale_var = scale_var.removeGlassBound
             
             %Update the cursor bounds
-            obj.cursor.xmax = obj.scale.main.end(1);            
+            obj.cursor.xmax = obj.scale.main.end(1);
+            obj.cursor.hasGlassBound = 0;
         end
         
         
@@ -203,9 +206,19 @@ classdef vasScale
             obj.scale.cap.startR = [obj.scale.main.end(1); y-obj.scale.cap.length/2];
             obj.scale.cap.endR = [obj.scale.main.end(1); y+obj.scale.cap.length/2];
             
-            %Update cursor position
+            %Update cursor position, probably can just based this on xmax-xmin
+            %instead of dealing with a glass bounds boolean but it might be
+            %nice to have that property for some reason, so this is a little
+            %hokey
+            
+            %Check if there's a glass bound
+            if obj.cursor.hasGlassBounds
+                reducedLength = obj.cursor.xmax-obj.cursor.xmin;
+            end
             obj.cursor.xmin = obj.scale.main.start(1);
-            obj.cursor.xmax = obj.scale.main.end(1);
+            if obj.cursor.hasGlassBounds
+                obj.cursor.xmax = obj.cursor.xmin + reducedLength;
+            end
             obj.cursor.length = obj.scale.cap.length;
             obj.cursor.start = [x; obj.scale.cap.startL(2)];
             obj.cursor.end = [x; obj.scale.cap.endL(2)];
@@ -257,9 +270,9 @@ classdef vasScale
             if length(obj.anchors.text) > 1
                 defSize = Screen('TextSize', obj.windowPtr,obj.anchors.size);
                 [lx, ly] = getTextCenter(obj.windowPtr, obj.anchors.text{1},...
-                    obj.cursor.xmin,obj.scale.cap.startL(2)-obj.anchors.vspace);
+                    obj.scale.cap.startL(1),obj.scale.cap.startL(2)-obj.anchors.vspace);
                 [rx, ry] = getTextCenter(obj.windowPtr, obj.anchors.text{2},...
-                    obj.cursor.xmax,obj.scale.cap.startR(2)-obj.anchors.vspace);
+                    obj.scale.cap.startR(1),obj.scale.cap.startR(2)-obj.anchors.vspace);
                 Screen('TextSize',obj.windowPtr,defSize);
                 obj.anchors.Lcoords = [lx, ly];
                 obj.anchors.Rcoords = [rx, ry];
