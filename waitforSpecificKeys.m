@@ -22,7 +22,7 @@ function [resp, RT] = waitforSpecificKeys(keys,~)
     KbQueueFlush;
     startTime = GetSecs;
     while (1)
-        [~, keyDown] = KbQueueCheck; 
+        [~, keyDown] = KbQueueCheck(-1); 
         
         %Prevent Windows from treating PTB like it has "stopped responding"
         %Empty keyboard buffers, i.e. no response yet will make Windows

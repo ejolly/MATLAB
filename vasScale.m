@@ -350,6 +350,8 @@ classdef vasScale
             % This should come before a Screen('Flip') call as it draws to the screen 
             % It's recommended to initially position the mouse at the mid-point of the 
             % scale via: SetMouse(vas.scale.main.midpoint(1), vas.scale.main.midpoint(2));
+            % See the embedded while loop for when single clicks are desired to
+            % ensure waiting for the mouse button to be release.
             %
             % For timing and logic, embed this along with stimulus drawing in a loop 
             % such as:
@@ -373,6 +375,9 @@ classdef vasScale
             %             Screen('Flip',mainWin);
             %             if buttons(1)
             %                 RT = GetSecs-sTime;
+            %                 while any(buttons)
+            %                   [~,~,buttons] = GetMouse;
+            %                 end
             %                 break;
             %             end
             %         end
